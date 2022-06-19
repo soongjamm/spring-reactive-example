@@ -36,7 +36,13 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+// native image builder : JVM bytecode 를 native image 로 빌드
+// native image : bytecode 에 대응하는 machine code. java 를 사용하고 있으면 JVM 에 의해 번역된 machine code
+// graalVM 을 사용해야만 지원되는 건가
 tasks.named('bootBuildImage') {
+    // 경량의 도커 이미지로 말아준다. 메모리에 수백 mb 올라가던게 수십 mb 만 올라간다?
+    // 하나의 컨테이너를 띄우던 것을 여러 컨테이너로 띄워 처리할 수 있으니 자원 효율적이다
+    // 그러나 바이트코드에 JVM을 GC 성능에 문제가 있다고... 잘 모르겠고 관심생기면 찾아보자.
     builder = 'paketobuildpacks/builder:tiny'
     environment = ['BP_NATIVE_IMAGE': 'true']
 }

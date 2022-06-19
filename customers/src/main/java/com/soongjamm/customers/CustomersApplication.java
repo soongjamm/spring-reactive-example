@@ -30,7 +30,7 @@ class Initializer implements CommandLineRunner {
                 .fetch()
                 .rowsUpdated();
 
-        Flux<Customer> names = Flux.just("Kim", "Lee", "Park", "Choi", "Yoon", "Jang", "Noh", "Oh")
+        Flux<Customer> names = Flux.just("Kim", "Lee", "Park", "Choi", "Yoon", "Jang", "Noh", "Oh", "Wang")
                 .map(name -> new Customer(null, name))
                 .flatMap(customerRepository::save);
 //                .map(customerRepository::save); // return Flux<Mono<Customer>>
