@@ -1,1 +1,5 @@
 rootProject.name = 'reactive'
+
+include "customers"
+include "gateway"
+include "orders"

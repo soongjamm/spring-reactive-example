@@ -1,22 +1,11 @@
-plugins {
-	id 'org.springframework.boot' version '2.7.0'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
+task("customers") {
+	dependsOn(":customers:bootRun")
 }
 
-group = 'com.soongjamm'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
-
-repositories {
-	mavenCentral()
+task("gateway") {
+	dependsOn(":gateway:bootRun")
 }
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
+task("orders") {
+	dependsOn(":orders:bootRun")
 }
