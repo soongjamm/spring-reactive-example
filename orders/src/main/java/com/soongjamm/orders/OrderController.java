@@ -1,5 +1,7 @@
 package com.soongjamm.orders;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
@@ -10,7 +12,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Controller
 public class OrderController {
     private final Map<Integer, List<Order>> orders = new ConcurrentHashMap<>();
@@ -26,8 +30,11 @@ public class OrderController {
         }
     }
 
+    @SneakyThrows
     @MessageMapping("orders.{customerId}")
-    Flux<Order> getFor(@DestinationVariable Integer customerId) {
+    public Flux<Order> getFor(@DestinationVariable Integer customerId) {
+        TimeUnit.SECONDS.sleep(3);
+        log.info("request for {}", customerId);
         var orders = this.orders.getOrDefault(customerId, Collections.emptyList());
         return Flux.fromIterable(orders);
     }

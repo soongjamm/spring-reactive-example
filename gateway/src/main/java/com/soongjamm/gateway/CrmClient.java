@@ -1,6 +1,7 @@
 package com.soongjamm.gateway;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,15 +11,17 @@ import reactor.core.publisher.Mono;
 // API Gateway 가 할수 있는 일
 // - service orchestration and composition
 // client 가 있고, order service, customer service 과 통신
+@Slf4j
 @Component
 @RequiredArgsConstructor
-class CrmClient {
+public class CrmClient {
 
     private final WebClient http;
     private final RSocketRequester rSocket;
 
     Flux<CustomerOrder> getCustomerOrders() {
         // composition of customer data and order data
+        log.info("getCustomerOrders || {}", Thread.currentThread().getName());
         return getCustomers()
                 .flatMap(cu ->
                         // 모든 고객의 주문을 얻기위해 계속 Customer 참조를 가지고 있어야 함.
@@ -29,6 +32,7 @@ class CrmClient {
     }
 
     Flux<Customer> getCustomers() {
+        log.info("getCustomers || {}", Thread.currentThread().getName());
         return this.http.get().uri("http://localhost:8080/customers")
                 .retrieve()
                 .bodyToFlux(Customer.class)
@@ -38,6 +42,8 @@ class CrmClient {
     }
 
     Flux<Order> getOrdersForCustomer(Integer customerId) {
+        log.info("getOrdersForCustomer - customerId={} || {}",
+                customerId, Thread.currentThread().getName());
         return rSocket
                 .route("orders.{customerId}", customerId)
                 .retrieveFlux(Order.class);
