@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,10 +16,10 @@ public class OrderController {
     private final Map<Integer, List<Order>> orders = new ConcurrentHashMap<>();
 
     public OrderController() {
-        for (var customerId = 0; customerId < 9; customerId++) {
+        for (var customerId = 0; customerId <= 8; customerId++) {
             var orders = new ArrayList<Order>();
 
-            for (int orderId = 0; orderId < Math.random() * 100; orderId++) {
+            for (int orderId = 0; orderId <= Math.random() * 100; orderId++) {
                 orders.add(new Order(orderId, customerId));
             }
             this.orders.put(customerId, orders);
@@ -27,7 +28,7 @@ public class OrderController {
 
     @MessageMapping("orders.{customerId}")
     Flux<Order> getFor(@DestinationVariable Integer customerId) {
-        var orders = this.orders.get(customerId);
+        var orders = this.orders.getOrDefault(customerId, Collections.emptyList());
         return Flux.fromIterable(orders);
     }
 }

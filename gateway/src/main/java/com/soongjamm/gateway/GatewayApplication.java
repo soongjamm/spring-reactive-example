@@ -6,6 +6,8 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.messaging.rsocket.RSocketRequester;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
 public class GatewayApplication {
@@ -32,4 +34,16 @@ public class GatewayApplication {
                 )
                 .build();
     }
+
+    @Bean
+    WebClient http(WebClient.Builder builder) {
+        return builder.build();
+    }
+
+    @Bean
+    RSocketRequester rSocketRequester(RSocketRequester.Builder builder) {
+        // RSocket은 stateful connection protocol. 앱 시작할때 서비스와 연결하고, 계속 같은 커넥션을 유지한다.  핸드쉐이크 등도 한 번만.
+        return builder.tcp("localhost", 8181);
+    }
 }
+
